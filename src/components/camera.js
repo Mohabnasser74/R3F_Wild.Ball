@@ -1,28 +1,13 @@
 import * as THREE from "three";
 
-export function firstPerson(ref, camera) {
-  const { current: body } = ref;
+export function ctp(body, camera, cameraProperties, delta) {
   const ballPosition = body.translation();
 
   const cameraPosition = new THREE.Vector3();
   cameraPosition.copy(ballPosition);
 
-  const cameraTarget = new THREE.Vector3();
-  cameraTarget.copy(ballPosition);
-  cameraTarget.y += 0.5;
-
-  camera.position.copy(cameraPosition);
-}
-
-export function thirdPerson(ref, camera, cameraProperties, delta) {
-  const { current: body } = ref;
-  const ballPosition = body.translation();
-
-  const cameraPosition = new THREE.Vector3();
-  cameraPosition.copy(ballPosition);
-
-  cameraPosition.z += 6.3;
-  cameraPosition.y += 3.4;
+  cameraPosition.z += 5; 
+  cameraPosition.y += 2.5;
 
   const cameraTarget = new THREE.Vector3();
   cameraTarget.copy(ballPosition);

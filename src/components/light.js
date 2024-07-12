@@ -1,14 +1,16 @@
-export default function Light() {
+import { memo } from "react";
+
+function Light() {
   return (
     <>
-      <spotLight
-        position={[20, 13.75, 15]}
-        penumbra={0.5}
-        castShadow
-        intensity={2}
+      <spotLight 
+        position={[15, 12, 20]} penumbra={.5}
+        castShadow intensity={2}
         shadow-bias={-0.0001}
       />
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={0.4} />
     </>
   );
 }
+
+export default memo(Light);

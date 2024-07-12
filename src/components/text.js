@@ -1,48 +1,48 @@
-import {RigidBody} from "@react-three/rapier";
-import { Center, Text3D } from "@react-three/drei";
+import { useRef, memo, useMemo } from "react"
+import { Text, useFont } from "@react-three/drei"
 
-export default function Text() {
-  
+function TextComponent() {
+  const startTxt = useRef();
+  const finishTxt = useRef();
+  const speed = useMemo(() => ({
+    angle: 0
+  }), [])
+
+  setInterval(() => {
+    if (startTxt.current) {
+      startTxt.current.position.y = Math.sin(speed.angle) * .3;
+    };
+    if (finishTxt.current) {
+      finishTxt.current.position.x = Math.cos(speed.angle) * 1.5;
+    };
+    speed.angle += .009;
+  }, 0);
+
   return (
-    <>
-      <Center position={[1.4, 0, 18.5]} rotation-y={-0.4}>
-        <Text3D
-          letterSpacing={0.02}
-          receiveShadow
-          castShadow
-          size={0.4}
-          font="https://threejs.org/examples/fonts/helvetiker_regular.typeface.json"
-        >
-          TESLA MODEL 3
-          <meshStandardMaterial color="#FFF" />
-        </Text3D>
-      </Center>
-      <Center position={[2, -0.6, 18.5]} rotation-y={-0.4}>
-        <Text3D
-          letterSpacing={0.02}
-          receiveShadow
-          castShadow
-          size={0.4}
-          font="https://threejs.org/examples/fonts/helvetiker_regular.typeface.json"
-        >
-          {" <"}3
-          <meshStandardMaterial color="#FFF" />
-        </Text3D>
-      </Center>
-      <RigidBody colliders="trimesh" restitution={0}>
-        <Center position={[0, 2, -30]}>
-          <Text3D
-            letterSpacing={0.5}
-            receiveShadow
-            castShadow
-            size={0.5}
-            font="https://threejs.org/examples/fonts/helvetiker_regular.typeface.json"
-          >
-            FINISH
-            <meshStandardMaterial color="#674188" />
-          </Text3D>
-        </Center>
-      </RigidBody>
-    </>
+  <>
+    <Text
+    ref={startTxt}
+    font="/font/static/NotoSans-Bold.ttf"
+    letterSpacing={0.06} 
+    fontSize={.6} 
+    position={[2.5, 0, 18.5]} 
+    rotation-y={-0.5} >
+      LETS GO!
+      <meshBasicMaterial color={"#ffffff"}/>
+    </Text>
+    <Text 
+      ref={finishTxt} 
+      font="/font/static/NotoSans-Bold.ttf"
+      letterSpacing={0.2} 
+      fontSize={.6} 
+      position={[0, 2, -30]} 
+      rotation-x={-0.2} >
+        FINISH
+        <meshBasicMaterial color={"#674188"}/>
+    </Text>
+  </>
   );
 }
+
+useFont.preload("/font/static/NotoSans-Bold.ttf");
+export default memo(TextComponent);

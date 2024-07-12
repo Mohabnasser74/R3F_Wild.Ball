@@ -1,26 +1,18 @@
 import { useState, useEffect, useRef, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { gameStatus } from "../toolkit/gameStatus";
+import { isRestartClick } from "../toolkit/slice/RestartClicked";
+import { Html } from "@react-three/drei";
 
-const unitTime = {
-  seconds: 0,
+  const timeUnits = {
+  milSec_2: 0,
   milSec_1: 0,
-  milSec_2: 0
+  seconds: 0
 };
 
 function Interface() {
-  const [ endGame, setEnd ] = useState(false);
-  const { restartGame, key, time } = useSelector((state) => state);
+  const { key, Restart } = useSelector((state) => state);
+  const [timePlaying, setTimePlaying] = useState(false);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (restartGame.z <= -22.5) {
-      setEnd(true);
-    } else {
-      setEnd(false);
-      dispatch(gameStatus(endGame));
-    }
-  }, [restartGame, endGame, dispatch]);
 
   const refs = {
     w: useRef(),
@@ -33,49 +25,43 @@ function Interface() {
   const { w, d, a, s, space } = refs;
 
   useEffect(() => {
-    const { forward, backward, leftward, rightward, jump } = key;
-
-    if (forward) {
-      w?.current?.classList?.add("active");
-    } else w?.current?.classList?.remove("active");
-
-    if (rightward) {
-      d?.current?.classList?.add("active");
-    } else d?.current?.classList?.remove("active");
-
-    if (leftward) {
-      a?.current?.classList?.add("active");
-    } else a?.current?.classList?.remove("active");
-
-    if (backward) {
-      s?.current?.classList?.add("active");
-    } else s?.current?.classList?.remove("active");
-
-    if (jump) {
-      space?.current?.classList?.add("active");
-    } else space?.current?.classList?.remove("active");
+    const { forward, rightward, leftward, backward, jump } = key;
+    const startTime = (forward || rightward || leftward || backward);
+    startTime && setTimePlaying(true);
+    if (startTime !== undefined) {
+      w.current.classList.toggle("active", forward);
+      d.current.classList.toggle("active", rightward);
+      a.current.classList.toggle("active", leftward);
+      s.current.classList.toggle("active", backward);
+      space.current.classList.toggle("active", jump);
+    }
   }, [key, a, d, s, w, space]);
 
   const timeRef = useRef();
 
-  if (time && timeRef.current) {
-
-    unitTime.milSec_2 += 1;
-    if (unitTime.milSec_2 > 9) {
-      unitTime.milSec_2 = 0;
-      unitTime.milSec_1 += 1;
-      if (unitTime.milSec_1 > 5) {
-        unitTime.milSec_1 = 0;
-        unitTime.seconds += 1;
+  useEffect(() => {
+  const timeDisplay = setInterval(() => {
+    if (timePlaying && Restart !== true && timeRef.current) {
+      timeUnits.milSec_2 += 1;
+      if (timeUnits.milSec_2 > 9) {
+        timeUnits.milSec_2 = 0;
+        timeUnits.milSec_1 += 1;
+        if (timeUnits.milSec_1 > 5) {
+          timeUnits.milSec_1 = 0;
+          timeUnits.seconds += 1;
+        }
       }
     }
-  }
+    if (timeRef.current) {
+      timeRef.current.innerText = `${timeUnits.seconds}.${timeUnits.milSec_1}${timeUnits.milSec_2}`;
+    };
+  }, 25);
+  return () => clearInterval(timeDisplay);
+  }, [Restart, timePlaying]);
 
-  if (timeRef.current) {
-    timeRef.current.textContent = `${unitTime.seconds}.${unitTime.milSec_1}${unitTime.milSec_2}`;
-  }
 
   return (
+  <Html wrapperClass="parent" style={{position: "unset"}}>
     <div className="interface">
       <div className="time" ref={timeRef}></div>
       <div className="controls">
@@ -91,20 +77,21 @@ function Interface() {
           <span className="key space" ref={space}></span>
         </div>
       </div>
-      {endGame && (
+      {Restart && (
         <div
           className="restart"
           onClick={() => {
-            dispatch(gameStatus(endGame));
-            for (let key in unitTime) {
-              unitTime[key] = 0;
-            }
+            for (let key in timeUnits) timeUnits[key] = 0;
+            dispatch(isRestartClick(true));
+            setTimePlaying(false);
+            setTimeout(() => dispatch(isRestartClick(false)), 30);
           }}
         >
           Restart!
         </div>
       )}
-    </div>
+      </div>
+    </Html>
   );
 }
 

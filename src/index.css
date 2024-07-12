@@ -1,10 +1,62 @@
+@import url('https://rsms.me/inter/inter.css');
+
 body {
-  margin: 0px;
-  font-family: monospace;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background: #1d2142;
+  color: white;
+  font-family: 'Inter var', sans-serif;
 }
 
-#canvas-container {
+canvas {
+  width: 100%;
   height: 100vh;
+}
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  -webkit-transform: translate3d(-50%, -50%, 0);
+  -moz-transform: translate3d(-50%, -50%, 0);
+  -ms-transform: translate3d(-50%, -50%, 0);
+  -o-transform: translate3d(-50%, -50%, 0);
+  font-size: 35px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-shadow: 0px 0px 13px #ffffff;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+.parent {
+    position: unset !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -o-transform: none !important;
+    transform-origin: unset !important;
+    display: contents !important;
+}
+
+canvas {
+  opacity: 0;
+  touch-action: none;
+  animation: fade-in 1s ease 0.3s forwards;
+  animation-delay: 0s;
+  -webkit-animation: fade-in 1s ease 0.3s forwards;
 }
 
 .interface {
@@ -40,7 +92,7 @@ body {
   position: absolute;
   top: 25%;
   width: 100%;
-  background-color: #0000004d;
+  background-color: #00000013;
   text-transform: uppercase;
   color: #fff;
   text-align: center;
@@ -48,8 +100,11 @@ body {
   padding: 10px 0;
   font-weight: 600;
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
+  text-shadow: 0px 0px 13px #ffffff;
 }
+
 
 .active {
   background-color: #ffffff6b;
@@ -57,9 +112,9 @@ body {
 
 .time {
   position: absolute;
-  top: 7%;
+  top: 8%;
   width: 100%;
-  background-color: #0000004d;
+  background-color: #00000013;
   color: #fff;
   text-align: center;
   font-size: 40px;

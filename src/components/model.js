@@ -1,19 +1,32 @@
-import { useGLTF } from "@react-three/drei";
+import { useAnimations, useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
+import { useEffect, memo } from "react";
 
-export default function Model() {
-  const model = useGLTF('/model/watercolor_cake.glb');
+function Model() {
+  const { scene, animations } = useGLTF('/model/car_drifter.glb');
+  const { ref, actions } = useAnimations(animations || [], scene);
+
+  useEffect(() => {
+      actions[animations[0].name]?.reset()?.fadeIn(0.5)?.play();
+      return () => actions[animations[0].name]?.fadeOut(0.5);
+  }, [actions, animations]);
+
   return (
     <RigidBody
-      type="fixed"
-      position={[0, -1, -25]}
+      type="dynamic"
+      colliders={"hull"}
+      position={[0, 0, -26]}
+      rotation-y={-2.5}
+      scale={[.1, .085, .1]}
       receiveShadow
       castShadow
-      colliders={"trimesh"}
-      rotation={[0, -2, 0]}
-      scale={[.99, .99, .99]}
     >
-      <primitive object={model.scene} scale={[.99, .99, .99]}/>
+      <group dispose={null}>
+        <primitive ref={ref} object={scene} scale={[.1, .085, .1]} />
+      </group>
     </RigidBody>
   );
 }
+
+useGLTF.preload("/model/car_drifter.glb");
+export default memo(Model);
